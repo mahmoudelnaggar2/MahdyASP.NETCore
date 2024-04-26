@@ -14,7 +14,7 @@ builder.Services.AddScoped<IWeatherForecastService, WeatherForecastService>();
 builder.Services.AddScoped<IProductsService, ProductsService>();
 
 builder.Services.AddDbContext<ApplicationDBContext>(
-    builder => builder.UseSqlServer("server=(localdb)\\MSSQLLocalDB; database=Products; integrated security=true")
+    builder => builder.UseSqlServer("Server=db4327.public.databaseasp.net; Database=db4327; User Id=db4327; Password=a!3ZLc?5t6N+; Encrypt=False; MultipleActiveResultSets=True;")
     );
 
 var app = builder.Build();
