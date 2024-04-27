@@ -1,4 +1,5 @@
 ﻿using MahdyASP.NETCore.Data;
+using MahdyASP.NETCore.Filters;
 using MahdyASP.NETCore.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,6 +7,8 @@ namespace MahdyASP.NETCore.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [LogSensitiveAction]
+    [SensitiveActionsLogger]
     public class ProductsController : ControllerBase
     {
         private readonly IProductsService _productsService;
@@ -16,6 +19,7 @@ namespace MahdyASP.NETCore.Controllers
         }
 
         [HttpGet(Name = "GetProducts")]
+        [LogSensitiveAction]
         public async Task<IEnumerable<Product>> Get()
         {
             return await _productsService.GetProducts();

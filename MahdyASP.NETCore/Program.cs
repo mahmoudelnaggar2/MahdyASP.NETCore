@@ -1,4 +1,6 @@
 using MahdyASP.NETCore.Data;
+using MahdyASP.NETCore.Filters;
+using MahdyASP.NETCore.Middlewares;
 using MahdyASP.NETCore.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,7 +8,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(
+    options =>
+    {
+        options.Filters.Add<LogActivityFilter>();
+        options.Filters.Add<SensitiveActionsLoggerAttribute>();
+    });
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -30,6 +38,10 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+app.UseMiddleware<RateLimitingMiddleware>();
+app.UseMiddleware<ProfilingMiddleware>();
+
 app.MapControllers();
+app.UseStaticFiles();
 
 app.Run();
