@@ -5,6 +5,7 @@ using MahdyASP.NETCore.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddJsonFile("config.json");
 
 // Add services to the container.
 
@@ -21,8 +22,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IWeatherForecastService, WeatherForecastService>();
 builder.Services.AddScoped<IProductsService, ProductsService>();
 
-builder.Services.AddDbContext<ApplicationDBContext>(
-    builder => builder.UseSqlServer("Server=db4327.public.databaseasp.net; Database=db4327; User Id=db4327; Password=a!3ZLc?5t6N+; Encrypt=False; MultipleActiveResultSets=True;")
+builder.Services.AddDbContext<ApplicationDBContext>
+    (
+    cfg => cfg.
+    UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
     );
 
 var app = builder.Build();
