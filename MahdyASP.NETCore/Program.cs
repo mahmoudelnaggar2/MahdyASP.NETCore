@@ -1,11 +1,24 @@
+using MahdyASP.NETCore;
 using MahdyASP.NETCore.Data;
 using MahdyASP.NETCore.Filters;
 using MahdyASP.NETCore.Middlewares;
 using MahdyASP.NETCore.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("config.json");
+
+builder.Services.Configure<AttachmentOptions>(
+    builder.Configuration.GetSection("Attachments"));
+
+//var attachmentOptions = builder.Configuration.GetSection("Attachments")
+//    .Get<AttachmentOptions>();
+//builder.Services.TryAddSingleton(attachmentOptions);
+
+//var attachmentOptions = new AttachmentOptions();
+//builder.Configuration.GetSection("Attachments").Bind(attachmentOptions);
+//builder.Services.TryAddSingleton(attachmentOptions);
 
 // Add services to the container.
 
