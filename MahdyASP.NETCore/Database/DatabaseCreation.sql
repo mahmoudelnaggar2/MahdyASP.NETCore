@@ -1,2 +1,0 @@
-﻿Create Database Products
-Go
