@@ -3,6 +3,7 @@ using MahdyASP.NETCore.Data;
 using MahdyASP.NETCore.Filters;
 using MahdyASP.NETCore.Middlewares;
 using MahdyASP.NETCore.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -34,6 +35,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IWeatherForecastService, WeatherForecastService>();
 builder.Services.AddScoped<IProductsService, ProductsService>();
+builder.Services.AddAuthentication().AddScheme<AuthenticationSchemeOptions,
+BasicAuthenticationHandler>("Basic", null);
 
 builder.Services.AddDbContext<ApplicationDBContext>
     (

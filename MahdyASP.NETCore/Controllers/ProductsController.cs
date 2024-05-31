@@ -1,6 +1,8 @@
-﻿using MahdyASP.NETCore.Data;
+﻿using System.Security.Claims;
+using MahdyASP.NETCore.Data;
 using MahdyASP.NETCore.Filters;
 using MahdyASP.NETCore.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MahdyASP.NETCore.Controllers
@@ -9,6 +11,7 @@ namespace MahdyASP.NETCore.Controllers
     [Route("[controller]")]
     [LogSensitiveAction]
     [SensitiveActionsLogger]
+    [Authorize]
     public class ProductsController : ControllerBase
     {
         private readonly IProductsService _productsService;
@@ -19,9 +22,11 @@ namespace MahdyASP.NETCore.Controllers
         }
 
         [HttpGet(Name = "GetProducts")]
-        [LogSensitiveAction]
+        //[LogSensitiveAction]
         public async Task<IEnumerable<Product>> Get()
         {
+            var username = ((ClaimsIdentity)User.Identity).FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             return await _productsService.GetProducts();
         }
 
@@ -35,6 +40,7 @@ namespace MahdyASP.NETCore.Controllers
         [HttpPost]
         public async Task<int> CreateProduct(Product product)
         {
+
             return await _productsService.CreateProduct(product);
         }
 
