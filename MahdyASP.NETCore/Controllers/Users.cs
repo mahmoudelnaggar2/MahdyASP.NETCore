@@ -1,10 +1,12 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using MahdyASP.NETCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
 namespace MahdyASP.NETCore.Controllers;
+
 [ApiController]
 [Route("[controller]")]
 public class UsersController(JwtOptions jwtOptions) : ControllerBase
@@ -21,14 +23,13 @@ public class UsersController(JwtOptions jwtOptions) : ControllerBase
             Issuer = jwtOptions.Issuer,
             Audience = jwtOptions.Audiance,
             SigningCredentials =
-            new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SigningKey)),
-            SecurityAlgorithms.HmacSha256),
+                new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SigningKey)),
+                SecurityAlgorithms.HmacSha256),
             Subject = new ClaimsIdentity(new Claim[]
             {
                 new(ClaimTypes.NameIdentifier, request.UserName),
                 new(ClaimTypes.Email, "x@x.com")
-            }
-        )
+            })
         };
 
         var securityToken = tokenHandler.CreateToken(tokenDescriptor);
@@ -37,10 +38,4 @@ public class UsersController(JwtOptions jwtOptions) : ControllerBase
 
         return Ok(accessToken);
     }
-}
-
-public class AuthenticationRequest
-{
-    public string UserName { get; set; }
-    public string Password { get; set; }
 }

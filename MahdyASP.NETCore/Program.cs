@@ -1,5 +1,6 @@
 using System.Text;
 using MahdyASP.NETCore;
+using MahdyASP.NETCore.Authentication;
 using MahdyASP.NETCore.Data;
 using MahdyASP.NETCore.Filters;
 using MahdyASP.NETCore.Middlewares;
@@ -48,7 +49,7 @@ builder.Services.AddAuthentication().AddJwtBearer(
     JwtBearerDefaults.AuthenticationScheme, options =>
     {
         options.SaveToken = true;
-        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidIssuer = jwtOptions.Issuer,
