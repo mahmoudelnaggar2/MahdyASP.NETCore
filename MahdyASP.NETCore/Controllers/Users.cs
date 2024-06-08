@@ -39,7 +39,10 @@ public class UsersController(JwtOptions jwtOptions,
             {
                 new(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new(ClaimTypes.Name, user.Name),
-                new(ClaimTypes.Role, "Admin")
+                new(ClaimTypes.Role, "Admin"),
+                new(ClaimTypes.Role, "SuperAdmin"),
+                new("UserType", "Employee"),
+                new("DateOfBirth", "2022-01-01")
             })
         };
 

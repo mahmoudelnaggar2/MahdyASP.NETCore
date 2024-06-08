@@ -20,7 +20,8 @@ namespace MahdyASP.NETCore.Controllers
 
         [HttpGet]
         [Route("")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "EmployeesOnly")]
+        [Authorize(Policy = "AgeGreaterThan25Requirements")]
         public async Task<IEnumerable<Product>> Get()
         {
             var username = ((ClaimsIdentity)User.Identity).FindFirst(ClaimTypes.NameIdentifier)?.Value;

@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using MahdyASP.NETCore;
 using MahdyASP.NETCore.Authentication;
@@ -8,6 +9,7 @@ using MahdyASP.NETCore.Middlewares;
 using MahdyASP.NETCore.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
@@ -46,6 +48,34 @@ builder.Services.AddScoped<IProductsService, ProductsService>();
 
 var jwtOptions = builder.Configuration.GetSection("Jwt").Get<JwtOptions>();
 builder.Services.AddSingleton(jwtOptions);
+builder.Services.AddSingleton<IAuthorizationHandler, AgeAuthorizationHandler>();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("EmployeesOnly", builder =>
+    {
+        builder.RequireClaim("UserType", "Employee");
+    });
+
+    options.AddPolicy("SuperUsers", builder =>
+    {
+        builder.RequireRole("Admin");
+        builder.RequireRole("SuperAdmin");
+    });
+
+    options.AddPolicy("AgeGreaterThan25", b =>
+    {
+        b.RequireAssertion(c =>
+        {
+            var dob = DateTime.Parse(c.User.FindFirstValue("DateOfBirth"));
+
+            return DateTime.Today.Year - dob.Year >= 25;
+        });
+    });
+
+    options.AddPolicy("AgeGreaterThan25Requirements",
+        b => b.AddRequirements(new AgeGreaterThan25Requirement()));
+});
 
 builder.Services.AddAuthentication().AddJwtBearer(
     JwtBearerDefaults.AuthenticationScheme, options =>
