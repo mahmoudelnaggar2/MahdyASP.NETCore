@@ -60,5 +60,7 @@
   <ItemGroup>
     <None Include="DatabaseCreation.sql" />
     <None Include="ProductsTable.sql" />
+    <None Include="Users.sql" />
+    <None Include="SeedUsersAndPermissions.sql" />
   </ItemGroup>
 </Project>

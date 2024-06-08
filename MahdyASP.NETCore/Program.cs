@@ -1,6 +1,7 @@
 using System.Text;
 using MahdyASP.NETCore;
 using MahdyASP.NETCore.Authentication;
+using MahdyASP.NETCore.Authorization;
 using MahdyASP.NETCore.Data;
 using MahdyASP.NETCore.Filters;
 using MahdyASP.NETCore.Middlewares;
@@ -30,6 +31,7 @@ builder.Services.Configure<AttachmentOptions>(
 builder.Services.AddControllers(
     options =>
     {
+        options.Filters.Add<PermissionBasedAuthorizationFilter>();
         options.Filters.Add<LogActivityFilter>();
         options.Filters.Add<SensitiveActionsLoggerAttribute>();
     });

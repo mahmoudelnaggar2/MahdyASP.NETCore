@@ -1,17 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace MahdyASP.NETCore.Data
+namespace MahdyASP.NETCore.Data;
+
+public class ApplicationDBContext(DbContextOptions options) : 
+    DbContext(options)
 {
-    public class ApplicationDBContext: DbContext
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        public ApplicationDBContext(DbContextOptions options)
-            : base(options){}
+        base.OnModelCreating(modelBuilder);
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<Product>().ToTable("Products");
-        }
+        modelBuilder.Entity<Product>().ToTable("Products");
+        modelBuilder.Entity<User>().ToTable("Users");
+        modelBuilder.Entity<UserPermission>().ToTable("UserPermissions")
+            .HasKey(x => new { x.UserId, x.PermissionId });
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using MahdyASP.NETCore.Authorization;
 using MahdyASP.NETCore.Data;
 using MahdyASP.NETCore.Filters;
 using MahdyASP.NETCore.Services;
@@ -12,17 +13,14 @@ namespace MahdyASP.NETCore.Controllers
     [LogSensitiveAction]
     [SensitiveActionsLogger]
     [Authorize]
-    public class ProductsController : ControllerBase
+    public class ProductsController(IProductsService productsService) : 
+        ControllerBase
     {
-        private readonly IProductsService _productsService;
+        private readonly IProductsService _productsService = productsService;
 
-        public ProductsController(IProductsService productsService)
-        {
-            _productsService = productsService;
-        }
-
-        [HttpGet(Name = "GetProducts")]
-        //[LogSensitiveAction]
+        [HttpGet]        
+        [Route("")]
+        [CheckPermission(Permission.ReadProducts)]
         public async Task<IEnumerable<Product>> Get()
         {
             var username = ((ClaimsIdentity)User.Identity).FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -32,6 +30,7 @@ namespace MahdyASP.NETCore.Controllers
 
         [HttpGet]
         [Route("{id}")]
+        [CheckPermission(Permission.ReadProducts)]
         public async Task<Product> GetById(int id)
         {
             return await _productsService.GetProductById(id);
