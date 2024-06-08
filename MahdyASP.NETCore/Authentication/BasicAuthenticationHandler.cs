@@ -2,25 +2,23 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
-using Azure.Identity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 
+namespace MahdyASP.NETCore.Authentication;
 
-
-public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
+public class BasicAuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptions> options, 
+    ILoggerFactory logger, UrlEncoder encoder) : 
+    AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
 {
-    public BasicAuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock) : base(options, logger, encoder, clock)
-    {
-    }
-
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        if (!Request.Headers.ContainsKey("Authorization"))
+        if (!Request.Headers.TryGetValue("Authorization", out StringValues value))
             return Task.FromResult(AuthenticateResult.NoResult());
 
 
-        if (!AuthenticationHeaderValue.TryParse(Request.Headers["Authorization"], out var authenticationHeader))
+        if (!AuthenticationHeaderValue.TryParse(value, out var authenticationHeader))
             return Task.FromResult(AuthenticateResult.Fail("UnKnown Scheme"));
 
         if (!authenticationHeader.Scheme.Equals("Basic", StringComparison.OrdinalIgnoreCase))
@@ -38,7 +36,7 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
         var identity = new ClaimsIdentity(
             [
                     new(ClaimTypes.NameIdentifier, userNameAndPassword[0]),
-                    new(ClaimTypes.Name, userNameAndPassword[0])
+                new(ClaimTypes.Name, userNameAndPassword[0])
             ],
             "Basic"
         );
