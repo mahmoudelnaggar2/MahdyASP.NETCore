@@ -38,7 +38,8 @@ public class UsersController(JwtOptions jwtOptions,
             Subject = new ClaimsIdentity(new Claim[]
             {
                 new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new(ClaimTypes.Name, user.Name)
+                new(ClaimTypes.Name, user.Name),
+                new(ClaimTypes.Role, "Admin")
             })
         };
 

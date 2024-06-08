@@ -13,14 +13,14 @@ namespace MahdyASP.NETCore.Controllers
     [LogSensitiveAction]
     [SensitiveActionsLogger]
     [Authorize]
-    public class ProductsController(IProductsService productsService) : 
+    public class ProductsController(IProductsService productsService) :
         ControllerBase
     {
         private readonly IProductsService _productsService = productsService;
 
-        [HttpGet]        
+        [HttpGet]
         [Route("")]
-        [CheckPermission(Permission.ReadProducts)]
+        [Authorize(Roles = "Admin")]
         public async Task<IEnumerable<Product>> Get()
         {
             var username = ((ClaimsIdentity)User.Identity).FindFirst(ClaimTypes.NameIdentifier)?.Value;
