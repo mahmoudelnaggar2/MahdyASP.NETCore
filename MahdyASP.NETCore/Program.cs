@@ -1,11 +1,14 @@
+using System.Text;
 using MahdyASP.NETCore;
 using MahdyASP.NETCore.Data;
 using MahdyASP.NETCore.Filters;
 using MahdyASP.NETCore.Middlewares;
 using MahdyASP.NETCore.Services;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("config.json");
@@ -35,8 +38,27 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IWeatherForecastService, WeatherForecastService>();
 builder.Services.AddScoped<IProductsService, ProductsService>();
-builder.Services.AddAuthentication().AddScheme<AuthenticationSchemeOptions,
-BasicAuthenticationHandler>("Basic", null);
+//builder.Services.AddAuthentication().AddScheme<AuthenticationSchemeOptions,
+//BasicAuthenticationHandler>("Basic", null);
+
+var jwtOptions = builder.Configuration.GetSection("Jwt").Get<JwtOptions>();
+builder.Services.AddSingleton(jwtOptions);
+
+builder.Services.AddAuthentication().AddJwtBearer(
+    JwtBearerDefaults.AuthenticationScheme, options =>
+    {
+        options.SaveToken = true;
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = jwtOptions.Issuer,
+            ValidateAudience = true,
+            ValidAudience = jwtOptions.Audiance,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SigningKey))
+        };
+    }
+);
 
 builder.Services.AddDbContext<ApplicationDBContext>
     (
